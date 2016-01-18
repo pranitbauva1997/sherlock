@@ -19,7 +19,7 @@ decode_results results;
 
 // Global Variables to be used instead of passing as parameters
 float dst_direction, current_direction;
-int start_poi = -1, end_poi = 1;
+int start_poi = -1, end_poi = -1;
 int current_poi, dst_poi; 
 
 // Method declarations
@@ -38,37 +38,64 @@ void getPath(){
 
 void getmessage(){
   irrecv.resume();
-  if(results.value % 2 == 1){
-    irrecv.resume();
-    current_poi = results.value;
-    irrecv.resume();
-    dst_poi = results.value;
-    irrecv.resume();
-    dst_direction = results.value;
-    irrecv.resume();
-    if(results.value != 500){
-      move_(0, 0);
+  if(irrecv.decode(&results)){
+    if(results.value % 2 == 1){
+      irrecv.resume();
+      if(irrecv.decode(&results)){
+        current_poi = results.value;
+        irrecv.resume();
+        if(irrecv.decode(&results)){
+          dst_poi = results.value;
+          irrecv.resume();
+          if(irrecv.decode(&results)){
+            dst_direction = results.value;
+            irrecv.resume();
+            if(irrecv.decode(&results)){
+              if(results.value != 500){
+                move_(0, 0);
+              }
+            }
+          }
+        }
+      }
     }
   }
   else{
     irrecv.resume();
-    start_poi = results.value;
-    irrecv.resume();
-    end_poi = results.value;
-    irrecv.resume();
-    if(results.value != 500){
-      move_(0, 0);
-    }
-    irrecv.resume();
-    current_poi = results.value;
-    irrecv.resume();
-    dst_poi = results.value;
-    irrecv.resume();
-    dst_direction = results.value;
-    irrecv.resume();
-    irrecv.resume();
-    if(results.value != 500){
-      move_(0, 0);
+    if(irrecv.decode(&results)){
+      start_poi = results.value;
+      irrecv.resume();
+      if(irrecv.decode(&results)){
+        end_poi = results.value;
+        irrecv.resume();
+        if(irrecv.decode(&results)){
+          if(results.value != 500){
+            move_(0, 0);
+          }
+          irrecv.resume();
+          if(irrecv.decode(&results)){
+            if(results.value % 2 == 0){
+              irrecv.resume();
+              if(irrecv.decode(&results)){
+                current_poi = results.value;
+                irrecv.resume();
+                if(irrecv.decode(&results)){
+                  dst_poi = results.value;
+                  irrecv.resume();
+                  if(irrecv.decode(&results)){
+                    dst_direction = results.value;
+                    irrecv.resume();
+                    irrecv.resume();
+                    if(results.value != 500){
+                      move_(0, 0);
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   }
 }
