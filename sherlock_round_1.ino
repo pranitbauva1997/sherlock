@@ -68,7 +68,7 @@ void move_(int l, int r){
     digitalWrite(POSITIVE_MOTOR_R, HIGH);
     digitalWrite(NEGATIVE_MOTOR_R, LOW);
   }
-  else{
+  else if(l < 0 && r < 0){
     analogWrite(ENABLE_MOTOR_L, -l);
     analogWrite(ENABLE_MOTOR_R, -r);
 
@@ -78,6 +78,66 @@ void move_(int l, int r){
     digitalWrite(POSITIVE_MOTOR_R, LOW);
     digitalWrite(NEGATIVE_MOTOR_R, HIGH);
   }
+  else if(l == 0 && r == 0){
+    analogWrite(ENABLE_MOTOR_L, 0);
+    analogWrite(ENABLE_MOTOR_R, 0);
+
+    digitalWrite(POSITIVE_MOTOR_L, LOW);
+    digitalWrite(NEGATIVE_MOTOR_L, LOW);
+
+    digitalWrite(POSITIVE_MOTOR_R, HIGH);
+    digitalWrite(NEGATIVE_MOTOR_R, LOW);
+  }
+  else if(l > 0 && r == 0){
+    analogWrite(ENABLE_MOTOR_L, l);
+    analogWrite(ENABLE_MOTOR_R, 0);
+
+    digitalWrite(POSITIVE_MOTOR_L, HIGH);
+    digitalWrite(NEGATIVE_MOTOR_L, LOW);
+
+    digitalWrite(POSITIVE_MOTOR_R, LOW);
+    digitalWrite(NEGATIVE_MOTOR_R, LOW);
+  }
+  else if(l < 0 && r == 0){
+    analogWrite(ENABLE_MOTOR_L, -l);
+    analogWrite(ENABLE_MOTOR_R, 0);
+
+    digitalWrite(POSITIVE_MOTOR_L, LOW);
+    digitalWrite(NEGATIVE_MOTOR_L, HIGH);
+
+    digitalWrite(POSITIVE_MOTOR_R, LOW);
+    digitalWrite(NEGATIVE_MOTOR_R, LOW);
+  }
+  else if(l == 0 && r > 0){
+    analogWrite(ENABLE_MOTOR_L, 0);
+    analogWrite(ENABLE_MOTOR_R, r);
+
+    digitalWrite(POSITIVE_MOTOR_L, LOW);
+    digitalWrite(NEGATIVE_MOTOR_L, LOW);
+
+    digitalWrite(POSITIVE_MOTOR_R, HIGH);
+    digitalWrite(NEGATIVE_MOTOR_R, LOW);
+  }
+  else if(l == 0 && r < 0){
+    analogWrite(ENABLE_MOTOR_L, 0);
+    analogWrite(ENABLE_MOTOR_R, -r);
+
+    digitalWrite(POSITIVE_MOTOR_L, LOW);
+    digitalWrite(NEGATIVE_MOTOR_L, LOW);
+
+    digitalWrite(POSITIVE_MOTOR_R, LOW);
+    digitalWrite(NEGATIVE_MOTOR_R, HIGH);
+  }
+  else{
+    analogWrite(ENABLE_MOTOR_L, 0);
+    analogWrite(ENABLE_MOTOR_R, 0);
+
+    digitalWrite(POSITIVE_MOTOR_L, LOW);
+    digitalWrite(NEGATIVE_MOTOR_L, LOW);
+
+    digitalWrite(POSITIVE_MOTOR_R, LOW);
+    digitalWrite(NEGATIVE_MOTOR_R, LOW);
+  }
 }
 
 void getPath(){
@@ -86,7 +146,7 @@ void getPath(){
   
   if(dst_direction - current_direction > 0){
     if(dst_direction - current_direction > 100){
-      move(+MAX_SPEED, -MAX_SPEED);
+      move_(+MAX_SPEED, -MAX_SPEED);
       delay(200);
     }
     if(dst_direction - current_direction < 50){
@@ -98,7 +158,7 @@ void getPath(){
       delay(200);
     }
     if(dst_direction - current_direction < 5){
-      move_(+MAX_SPEED, +MAX_SPEED)
+      move_(+MAX_SPEED, +MAX_SPEED);
       delay(200);
     }
   }
