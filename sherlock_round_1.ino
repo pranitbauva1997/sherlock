@@ -6,9 +6,13 @@
 // Pin for IR LED receiver
 #define IRpin 11
 
-// Pin for motor PWM
-#define MOTOR_L 1
-#define MOTOR_R 2
+// Pins for motor
+#define ENABLE_MOTOR_L 1
+#define ENABLE_MOTOR_R 2
+#define POSITIVE_MOTOR_L 3
+#define NEGATIVE_MOTOR_L 4
+#define POSITIVE_MOTOR_R 5
+#define NEGATIVE_MOTOR_R 6
 
 // Define other "constants"
 #define MAX_SPEED 150
@@ -31,10 +35,49 @@ String received;
 void getPath();
 void move_();
 void getmessage();
+int decode_hex(String received);
 
 void move_(int l, int r){
-  analogWrite(MOTOR_L, l);
-  analogWrite(MOTOR_R, r);
+  if(l > 0 && r > 0){
+    analogWrite(ENABLE_MOTOR_L, l);
+    analogWrite(ENABLE_MOTOR_R, r);
+
+    digitalWrite(POSITIVE_MOTOR_L, HIGH);
+    digitalWrite(NEGATIVE_MOTOR_L, LOW);
+
+    digitalWrite(POSITIVE_MOTOR_R, HIGH);
+    digitalWrite(NEGATIVE_MOTOR_R, LOW);
+  }
+  else if(l > 0 && r < 0){
+    analogWrite(ENABLE_MOTOR_L, l);
+    analogWrite(ENABLE_MOTOR_R, -r);
+
+    digitalWrite(POSITIVE_MOTOR_L, HIGH);
+    digitalWrite(NEGATIVE_MOTOR_L, LOW);
+
+    digitalWrite(POSITIVE_MOTOR_R, LOW);
+    digitalWrite(NEGATIVE_MOTOR_R, HIGH);
+  }
+  else if(l < 0 && r > 0){
+    analogWrite(ENABLE_MOTOR_L, -l);
+    analogWrite(ENABLE_MOTOR_R, r);
+
+    digitalWrite(POSITIVE_MOTOR_L, LOW);
+    digitalWrite(NEGATIVE_MOTOR_L, HIGH);
+
+    digitalWrite(POSITIVE_MOTOR_R, HIGH);
+    digitalWrite(NEGATIVE_MOTOR_R, LOW);
+  }
+  else{
+    analogWrite(ENABLE_MOTOR_L, -l);
+    analogWrite(ENABLE_MOTOR_R, -r);
+
+    digitalWrite(POSITIVE_MOTOR_L, LOW);
+    digitalWrite(NEGATIVE_MOTOR_L, HIGH);
+
+    digitalWrite(POSITIVE_MOTOR_R, LOW);
+    digitalWrite(NEGATIVE_MOTOR_R, HIGH);
+  }
 }
 
 void getPath(){
@@ -43,45 +86,45 @@ void getPath(){
   
   if(dst_direction - current_direction > 0){
     if(dst_direction - current_direction > 100){
-      move_(MOTOR_L, +MAX_SPEED);
-      move_(MOTOR_R, -MAX_SPEED);
+      move_(ENABLE_MOTOR_L, +MAX_SPEED);
+      move_(ENABLE_MOTOR_R, -MAX_SPEED);
       delay(200);
     }
     if(dst_direction - current_direction < 50){
-      move_(MOTOR_L, +MAX_SPEED);
-      move_(MOTOR_R, 0);
+      move_(ENABLE_MOTOR_L, +MAX_SPEED);
+      move_(ENABLE_MOTOR_R, 0);
       delay(200);
     }
     if(dst_direction - current_direction < 20){
-      move_(MOTOR_L, +MAX_SPEED/2);
-      move_(MOTOR_R, +MAX_SPEED/5);
+      move_(ENABLE_MOTOR_L, +MAX_SPEED/2);
+      move_(ENABLE_MOTOR_R, +MAX_SPEED/5);
       delay(200);
     }
     if(dst_direction - current_direction < 5){
-      move_(MOTOR_L, +MAX_SPEED);
-      move_(MOTOR_R, +MAX_SPEED);
+      move_(ENABLE_MOTOR_L, +MAX_SPEED);
+      move_(ENABLE_MOTOR_R, +MAX_SPEED);
       delay(200);
     }
   }
   if(dst_direction - current_direction < 0){
     if(dst_direction - current_direction > 100){
-      move_(MOTOR_R, +MAX_SPEED);
-      move_(MOTOR_L, -MAX_SPEED);
+      move_(ENABLE_MOTOR_R, +MAX_SPEED);
+      move_(ENABLE_MOTOR_L, -MAX_SPEED);
       delay(200);
     }
     if(dst_direction - current_direction < 50){
-      move_(MOTOR_R, +MAX_SPEED);
-      move_(MOTOR_L, 0);
+      move_(ENABLE_MOTOR_R, +MAX_SPEED);
+      move_(ENABLE_MOTOR_L, 0);
       delay(200);
     }
     if(dst_direction - current_direction < 20){
-      move_(MOTOR_R, +MAX_SPEED/2);
-      move_(MOTOR_L, +MAX_SPEED/5);
+      move_(ENABLE_MOTOR_R, +MAX_SPEED/2);
+      move_(ENABLE_MOTOR_L, +MAX_SPEED/5);
       delay(200);
     }
     if(dst_direction - current_direction < 5){
-      move_(MOTOR_R, +MAX_SPEED);
-      move_(MOTOR_L, +MAX_SPEED);
+      move_(ENABLE_MOTOR_R, +MAX_SPEED);
+      move_(ENABLE_MOTOR_L, +MAX_SPEED);
       delay(200);
     }
   }
@@ -183,9 +226,12 @@ void setup(){
   irrecv.enableIRIn();
 
   // Setup the motors
-  pinMode(MOTOR_L, OUTPUT);
-  pinMode(MOTOR_R, OUTPUT);
-  
+  pinMode(ENABLE_MOTOR_L, OUTPUT);
+  pinMode(ENABLE_MOTOR_R, OUTPUT);
+  pinMode(POSITIVE_MOTOR_R, OUTPUT);
+  pinMode(NEGATIVE_MOTOR_R, OUTPUT);
+  pinMode(POSITIVE_MOTOR_R, OUTPUT);
+  pinMode(NEGATIVE_MOTOR_L, OUTPUT);
 }
 
 void loop(){
