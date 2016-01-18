@@ -9,7 +9,10 @@
 // Pin for motor PWM
 #define MOTOR_L 1
 #define MOTOR_R 2
+
+// Define other "constants"
 #define MAX_SPEED 150
+#define MAGNETIC_DECLINATION 0.575959
 
 // Declaring the sensors
 Adafruit_HMC5883_Unified mag = Adafruit_HMC5883_Unified(12345);
@@ -21,7 +24,7 @@ decode_results results;
 // Global Variables to be used instead of passing as parameters
 float dst_direction, current_direction;
 int start_poi = -1, end_poi = -1;
-int current_poi, dst_poi; 
+int current_poi, dst_poi;
 
 // Method declarations
 void getPath();
@@ -39,45 +42,45 @@ void getPath(){
   
   if(dst_direction - current_direction > 0){
     if(dst_direction - current_direction > 100){
-      move_(MOTOR_L, +MAX);
-      move_(MOTOR_R, -MAX);
+      move_(MOTOR_L, +MAX_SPEED);
+      move_(MOTOR_R, -MAX_SPEED);
       delay(200);
     }
     if(dst_direction - current_direction < 50){
-      move_(MOTOR_L, +MAX);
+      move_(MOTOR_L, +MAX_SPEED);
       move_(MOTOR_R, 0);
       delay(200);
     }
     if(dst_direction - current_direction < 20){
-      move_(MOTOR_L, +MAX/2);
-      move_(MOTOR_R, +MAX/5);
+      move_(MOTOR_L, +MAX_SPEED/2);
+      move_(MOTOR_R, +MAX_SPEED/5);
       delay(200);
     }
     if(dst_direction - current_direction < 5){
-      move_(MOTOR_L, +MAX);
-      move_(MOTOR_R, +MAX);
+      move_(MOTOR_L, +MAX_SPEED);
+      move_(MOTOR_R, +MAX_SPEED);
       delay(200);
     }
   }
   if(dst_direction - current_direction < 0){
     if(dst_direction - current_direction > 100){
-      move_(MOTOR_R, +MAX);
-      move_(MOTOR_L, -MAX);
+      move_(MOTOR_R, +MAX_SPEED);
+      move_(MOTOR_L, -MAX_SPEED);
       delay(200);
     }
     if(dst_direction - current_direction < 50){
-      move_(MOTOR_R, +MAX);
+      move_(MOTOR_R, +MAX_SPEED);
       move_(MOTOR_L, 0);
       delay(200);
     }
     if(dst_direction - current_direction < 20){
-      move_(MOTOR_R, +MAX/2);
-      move_(MOTOR_L, +MAX/5);
+      move_(MOTOR_R, +MAX_SPEED/2);
+      move_(MOTOR_L, +MAX_SPEED/5);
       delay(200);
     }
     if(dst_direction - current_direction < 5){
-      move_(MOTOR_R, +MAX);
-      move_(MOTOR_L, +MAX);
+      move_(MOTOR_R, +MAX_SPEED);
+      move_(MOTOR_L, +MAX_SPEED);
       delay(200);
     }
   }
@@ -121,20 +124,25 @@ void getmessage(){
           }
           irrecv.resume();
           if(irrecv.decode(&results)){
-            if(results.value % 2 == 0){
+            if(results.value == 400){
               irrecv.resume();
               if(irrecv.decode(&results)){
-                current_poi = results.value;
-                irrecv.resume();
-                if(irrecv.decode(&results)){
-                  dst_poi = results.value;
+                if(results.value % 2 == 0){
                   irrecv.resume();
                   if(irrecv.decode(&results)){
-                    dst_direction = results.value;
+                    current_poi = results.value;
                     irrecv.resume();
-                    irrecv.resume();
-                    if(results.value != 500){
-                      move_(0, 0);
+                    if(irrecv.decode(&results)){
+                      dst_poi = results.value;
+                      irrecv.resume();
+                      if(irrecv.decode(&results)){
+                        dst_direction = results.value;
+                        irrecv.resume();
+                        irrecv.resume();
+                        if(results.value != 500){
+                          move_(0, 0);
+                        }
+                      }
                     }
                   }
                 }
@@ -155,6 +163,11 @@ void setup(){
     Serial.println("Oops, no HMC5883L detected ... Check your wiring");
     while(1);
   }
+
+  // Setup of IR Receiver
+  irrecv.enableIRIn();
+
+  // Setup the motors
   pinMode(MOTOR_L, OUTPUT);
   pinMode(MOTOR_R, OUTPUT);
   
@@ -164,7 +177,6 @@ void loop(){
 
   // Get and decode the signal from IR receiver
   if(irrecv.decode(&results)){
-    Serial.println(results.value, DEC);
     if(results.value == 400){
       getmessage();
     }
@@ -173,7 +185,9 @@ void loop(){
 
   // Get the heading from magnetometer
   mag.getEvent(&event);
-  current_direction = atan2(event.magnetic.y, event.magnetic.x) + 0.22;
+  current_direction = atan2(event.magnetic.y, event.magnetic.x);
+  // Correct the error supplied by magenotometer because of "magnetic declication"
+  current_direction += MAGNETIC_DECLINATION;
   
   if(current_direction < 0);
     current_direction += 2*PI;
