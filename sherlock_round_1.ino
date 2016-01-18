@@ -9,6 +9,7 @@
 // Pin for motor PWM
 #define MOTOR_L 1
 #define MOTOR_R 2
+#define MAX_SPEED 150
 
 // Declaring the sensors
 Adafruit_HMC5883_Unified mag = Adafruit_HMC5883_Unified(12345);
@@ -33,7 +34,53 @@ void move_(int l, int r){
 }
 
 void getPath(){
+  // This part needs to be physically tested to know how the degree's are
+  // calibrated
   
+  if(dst_direction - current_direction > 0){
+    if(dst_direction - current_direction > 100){
+      move_(MOTOR_L, +MAX);
+      move_(MOTOR_R, -MAX);
+      delay(200);
+    }
+    if(dst_direction - current_direction < 50){
+      move_(MOTOR_L, +MAX);
+      move_(MOTOR_R, 0);
+      delay(200);
+    }
+    if(dst_direction - current_direction < 20){
+      move_(MOTOR_L, +MAX/2);
+      move_(MOTOR_R, +MAX/5);
+      delay(200);
+    }
+    if(dst_direction - current_direction < 5){
+      move_(MOTOR_L, +MAX);
+      move_(MOTOR_R, +MAX);
+      delay(200);
+    }
+  }
+  if(dst_direction - current_direction < 0){
+    if(dst_direction - current_direction > 100){
+      move_(MOTOR_R, +MAX);
+      move_(MOTOR_L, -MAX);
+      delay(200);
+    }
+    if(dst_direction - current_direction < 50){
+      move_(MOTOR_R, +MAX);
+      move_(MOTOR_L, 0);
+      delay(200);
+    }
+    if(dst_direction - current_direction < 20){
+      move_(MOTOR_R, +MAX/2);
+      move_(MOTOR_L, +MAX/5);
+      delay(200);
+    }
+    if(dst_direction - current_direction < 5){
+      move_(MOTOR_R, +MAX);
+      move_(MOTOR_L, +MAX);
+      delay(200);
+    }
+  }
 }
 
 void getmessage(){
@@ -136,8 +183,12 @@ void loop(){
 
   current_direction = current_direction * 180/M_PI;
 
+  // The angle should be between (-180, 180]
+  if(current_direction > 180){
+    current_direction = current_direction - 360;
+  }
+
 
   // Getting the path to move the bot
   getPath();
 }
-
