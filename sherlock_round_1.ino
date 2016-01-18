@@ -25,6 +25,7 @@ decode_results results;
 float dst_direction, current_direction;
 int start_poi = -1, end_poi = -1;
 int current_poi, dst_poi;
+String received;
 
 // Method declarations
 void getPath();
@@ -88,19 +89,24 @@ void getPath(){
 
 void getmessage(){
   irrecv.resume();
-  if(irrecv.decode(&results)){
+  received = String(results.value, HEX);
+  if(decode_hex(received)){
     if(results.value % 2 == 1){
       irrecv.resume();
-      if(irrecv.decode(&results)){
+      received = String(results.value, HEX);
+      if(decode_hex(received)){
         current_poi = results.value;
         irrecv.resume();
-        if(irrecv.decode(&results)){
+        received = String(results.value, HEX);
+        if(decode_hex(received)){
           dst_poi = results.value;
           irrecv.resume();
-          if(irrecv.decode(&results)){
+          received = String(results.value, HEX);
+          if(decode_hex(received)){
             dst_direction = results.value;
             irrecv.resume();
-            if(irrecv.decode(&results)){
+            received = String(results.value, HEX);
+            if(decode_hex(received)){
               if(results.value != 500){
                 move_(0, 0);
               }
@@ -112,33 +118,42 @@ void getmessage(){
   }
   else{
     irrecv.resume();
-    if(irrecv.decode(&results)){
+    received = String(results.value, HEX);
+    if(decode_hex(received)){
       start_poi = results.value;
       irrecv.resume();
-      if(irrecv.decode(&results)){
+      received = String(results.value, HEX);
+      if(decode_hex(received)){
         end_poi = results.value;
         irrecv.resume();
-        if(irrecv.decode(&results)){
+        received = String(results.value, HEX);
+        if(decode_hex(received)){
           if(results.value != 500){
             move_(0, 0);
           }
           irrecv.resume();
-          if(irrecv.decode(&results)){
+          received = String(results.value, HEX);
+          if(decode_hex(received)){
             if(results.value == 400){
               irrecv.resume();
-              if(irrecv.decode(&results)){
+              received = String(results.value, HEX);
+              if(decode_hex(received)){
                 if(results.value % 2 == 0){
                   irrecv.resume();
-                  if(irrecv.decode(&results)){
+                  received = String(results.value, HEX);
+                  if(decode_hex(received)){
                     current_poi = results.value;
                     irrecv.resume();
-                    if(irrecv.decode(&results)){
+                    received = String(results.value, HEX);
+                    if(decode_hex(received)){
                       dst_poi = results.value;
                       irrecv.resume();
-                      if(irrecv.decode(&results)){
+                      received = String(results.value, HEX);
+                      if(decode_hex(received)){
                         dst_direction = results.value;
                         irrecv.resume();
                         irrecv.resume();
+                        received = String(results.value, HEX);
                         if(results.value != 500){
                           move_(0, 0);
                         }
@@ -176,8 +191,9 @@ void setup(){
 void loop(){
 
   // Get and decode the signal from IR receiver
-  if(irrecv.decode(&results)){
-    if(results.value == 400){
+  if(decode_hex(received)){
+    received = String(results.value, HEX);
+    if(decode_hex(received) == 400){
       getmessage();
     }
   }
@@ -205,4 +221,16 @@ void loop(){
 
   // Getting the path to move the bot
   getPath();
+}
+
+int decode_hex(String input)
+{
+    int zeros = 8-input.length();
+    for(int i=0; i<zeros; i++) {
+        input = "0" + input;
+    }
+    String hex_data = input.substring(0,2) + input.substring(4,6);
+    const char * c = hex_data.c_str();
+    int output = (int) strtol(c, NULL, 16);
+    return output;
 }
