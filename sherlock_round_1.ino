@@ -86,45 +86,37 @@ void getPath(){
   
   if(dst_direction - current_direction > 0){
     if(dst_direction - current_direction > 100){
-      move_(ENABLE_MOTOR_L, +MAX_SPEED);
-      move_(ENABLE_MOTOR_R, -MAX_SPEED);
+      move(+MAX_SPEED, -MAX_SPEED);
       delay(200);
     }
     if(dst_direction - current_direction < 50){
-      move_(ENABLE_MOTOR_L, +MAX_SPEED);
-      move_(ENABLE_MOTOR_R, 0);
+      move_(+MAX_SPEED, 0);
       delay(200);
     }
     if(dst_direction - current_direction < 20){
-      move_(ENABLE_MOTOR_L, +MAX_SPEED/2);
-      move_(ENABLE_MOTOR_R, +MAX_SPEED/5);
+      move_(+MAX_SPEED/2, +MAX_SPEED/5);
       delay(200);
     }
     if(dst_direction - current_direction < 5){
-      move_(ENABLE_MOTOR_L, +MAX_SPEED);
-      move_(ENABLE_MOTOR_R, +MAX_SPEED);
+      move_(+MAX_SPEED, +MAX_SPEED)
       delay(200);
     }
   }
   if(dst_direction - current_direction < 0){
     if(dst_direction - current_direction > 100){
-      move_(ENABLE_MOTOR_R, +MAX_SPEED);
-      move_(ENABLE_MOTOR_L, -MAX_SPEED);
+      move_(-MAX_SPEED, +MAX_SPEED);
       delay(200);
     }
     if(dst_direction - current_direction < 50){
-      move_(ENABLE_MOTOR_R, +MAX_SPEED);
-      move_(ENABLE_MOTOR_L, 0);
+      move_(0, +MAX_SPEED);
       delay(200);
     }
     if(dst_direction - current_direction < 20){
-      move_(ENABLE_MOTOR_R, +MAX_SPEED/2);
-      move_(ENABLE_MOTOR_L, +MAX_SPEED/5);
+      move_(+MAX_SPEED/5, +MAX_SPEED/2);
       delay(200);
     }
     if(dst_direction - current_direction < 5){
-      move_(ENABLE_MOTOR_R, +MAX_SPEED);
-      move_(ENABLE_MOTOR_L, +MAX_SPEED);
+      move_(+MAX_SPEED, +MAX_SPEED);
       delay(200);
     }
   }
