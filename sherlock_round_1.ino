@@ -137,37 +137,37 @@ void getPath(){
   if(dst_direction - current_direction > 0){
     if(dst_direction - current_direction > 100){
       move_(+MAX_SPEED, -MAX_SPEED);
-      delay(200);
+      delay(500);
     }
     if(dst_direction - current_direction < 50){
       move_(+MAX_SPEED, 0);
-      delay(200);
+      delay(500);
     }
     if(dst_direction - current_direction < 20){
       move_(+MAX_SPEED/2, +MAX_SPEED/5);
-      delay(200);
+      delay(500);
     }
     if(dst_direction - current_direction < 5){
       move_(+MAX_SPEED, +MAX_SPEED);
-      delay(200);
+      delay(500);
     }
   }
   if(dst_direction - current_direction < 0){
     if(dst_direction - current_direction > 100){
       move_(-MAX_SPEED, +MAX_SPEED);
-      delay(200);
+      delay(500);
     }
     if(dst_direction - current_direction < 50){
       move_(0, +MAX_SPEED);
-      delay(200);
+      delay(500);
     }
     if(dst_direction - current_direction < 20){
       move_(+MAX_SPEED/5, +MAX_SPEED/2);
-      delay(200);
+      delay(500);
     }
     if(dst_direction - current_direction < 5){
       move_(+MAX_SPEED, +MAX_SPEED);
-      delay(200);
+      delay(500);
     }
   }
 }
