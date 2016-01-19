@@ -78,16 +78,6 @@ void move_(int l, int r){
     digitalWrite(POSITIVE_MOTOR_R, LOW);
     digitalWrite(NEGATIVE_MOTOR_R, HIGH);
   }
-  else if(l == 0 && r == 0){
-    analogWrite(ENABLE_MOTOR_L, 0);
-    analogWrite(ENABLE_MOTOR_R, 0);
-
-    digitalWrite(POSITIVE_MOTOR_L, LOW);
-    digitalWrite(NEGATIVE_MOTOR_L, LOW);
-
-    digitalWrite(POSITIVE_MOTOR_R, HIGH);
-    digitalWrite(NEGATIVE_MOTOR_R, LOW);
-  }
   else if(l > 0 && r == 0){
     analogWrite(ENABLE_MOTOR_L, l);
     analogWrite(ENABLE_MOTOR_R, 0);
