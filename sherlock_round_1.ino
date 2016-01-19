@@ -291,7 +291,7 @@ void loop(){
   // Get the heading from magnetometer
   mag.getEvent(&event);
   current_direction = atan2(event.magnetic.y, event.magnetic.x);
-  // Correct the error supplied by magenotometer because of "magnetic declication"
+  // Correct the error supplied by magnetometer because of "magnetic declination"
   current_direction += MAGNETIC_DECLINATION;
 
   if(current_direction < 0);
