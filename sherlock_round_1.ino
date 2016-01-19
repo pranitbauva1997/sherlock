@@ -133,7 +133,7 @@ void move_(int l, int r){
 void getPath(){
   // This part needs to be physically tested to know how the degree's are
   // calibrated
-  
+
   if(dst_direction - current_direction > 0){
     if(dst_direction - current_direction > 100){
       move_(+MAX_SPEED, -MAX_SPEED);
@@ -174,25 +174,25 @@ void getPath(){
 
 void getmessage(){
   irrecv.resume();
-  received = String(results.value, HEX);
-  if(decode_hex(received)){
-    if(results.value % 2 == 1){
+  if(irrecv.decode(&results)){
+    received = String(results.value, HEX);
+    if(decode_hex(received) % 2 == 1){
       irrecv.resume();
-      received = String(results.value, HEX);
-      if(decode_hex(received)){
-        current_poi = results.value;
-        irrecv.resume();
+      if(irrecv.decode(&results)){
         received = String(results.value, HEX);
-        if(decode_hex(received)){
-          dst_poi = results.value;
-          irrecv.resume();
+        current_poi = decode_hex(received);
+        irrecv.resume();
+        if(irrecv.decode(&results)){
           received = String(results.value, HEX);
-          if(decode_hex(received)){
-            dst_direction = results.value;
-            irrecv.resume();
+          dst_poi = decode_hex(received);
+          irrecv.resume();
+          if(irrecv.decode(&results)){
             received = String(results.value, HEX);
-            if(decode_hex(received)){
-              if(results.value != 500){
+            dst_direction = decode_hex(received);
+            irrecv.resume();
+            if(irrecv.decode(&results)){
+              received = String(results.value, HEX);
+              if(decode_hex(received) != 500){
                 move_(0, 0);
               }
             }
@@ -203,44 +203,46 @@ void getmessage(){
   }
   else{
     irrecv.resume();
-    received = String(results.value, HEX);
-    if(decode_hex(received)){
-      start_poi = results.value;
-      irrecv.resume();
+    if(irrecv.decode(&results)){
       received = String(results.value, HEX);
-      if(decode_hex(received)){
-        end_poi = results.value;
+      start_poi = decode_hex(received);
+      irrecv.resume();
+      if(irrecv.decode(&results)){
+       received = String(results.value, HEX);
+        end_poi = decode_hex(received);
         irrecv.resume();
-        received = String(results.value, HEX);
-        if(decode_hex(received)){
-          if(results.value != 500){
+        if(irrecv.decode(&results)){
+          received = String(results.value, HEX);
+          if(decode_hex(received) != 500){
             move_(0, 0);
           }
           irrecv.resume();
-          received = String(results.value, HEX);
-          if(decode_hex(received)){
-            if(results.value == 400){
+          if(irrecv.decode(&results)){
+            received = String(results.value, HEX);
+            if(decode_hex(received) == 400){
               irrecv.resume();
-              received = String(results.value, HEX);
-              if(decode_hex(received)){
-                if(results.value % 2 == 0){
+              if(irrecv.decode(&results)){
+                received = String(results.value, HEX);
+                if(decode_hex(received) % 2 == 0){
                   irrecv.resume();
-                  received = String(results.value, HEX);
-                  if(decode_hex(received)){
-                    current_poi = results.value;
-                    irrecv.resume();
+                  if(irrecv.decode(&results)){
                     received = String(results.value, HEX);
-                    if(decode_hex(received)){
-                      dst_poi = results.value;
-                      irrecv.resume();
+                    current_poi = decode_hex(received);
+                    irrecv.resume();
+                    if(irrecv.decode(&results)){
                       received = String(results.value, HEX);
-                      if(decode_hex(received)){
-                        dst_direction = results.value;
-                        irrecv.resume();
-                        irrecv.resume();
+                      dst_poi = decode_hex(received);
+                      irrecv.resume();
+                      if(irrecv.decode(&results)){
                         received = String(results.value, HEX);
-                        if(results.value != 500){
-                          move_(0, 0);
+                        dst_direction = decode_hex(received);
+                        irrecv.resume();
+                        irrecv.resume();
+                        if(irrecv.decode(&results)){
+                          received = String(results.value, HEX);
+                          if(decode_hex(received) != 500){
+                            move_(0, 0);
+                          }
                         }
                       }
                     }
@@ -254,10 +256,9 @@ void getmessage(){
     }
   }
 }
-
 void setup(){
   Serial.begin(9600);
-  
+
   // Setup of magnetometer
   if(!mag.begin()){
     Serial.println("Oops, no HMC5883L detected ... Check your wiring");
@@ -279,7 +280,7 @@ void setup(){
 void loop(){
 
   // Get and decode the signal from IR receiver
-  if(decode_hex(received)){
+  if(irrecv.decode(&results)){
     received = String(results.value, HEX);
     if(decode_hex(received) == 400){
       getmessage();
@@ -292,7 +293,7 @@ void loop(){
   current_direction = atan2(event.magnetic.y, event.magnetic.x);
   // Correct the error supplied by magenotometer because of "magnetic declication"
   current_direction += MAGNETIC_DECLINATION;
-  
+
   if(current_direction < 0);
     current_direction += 2*PI;
 
