@@ -27,7 +27,7 @@ decode_results results;
 
 // Global Variables to be used instead of passing as parameters
 float dst_direction, current_direction;
-int start_poi = -1, end_poi = -1;
+int start_poi, end_poi;
 int current_poi, dst_poi;
 String received;
 
