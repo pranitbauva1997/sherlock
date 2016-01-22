@@ -25,13 +25,11 @@ void setup()
   irrecv.enableIRIn(); // Start the receiver
 }
 
-void loop() 
+void loop()
 {
-  if (irrecv.decode(&results)) 
+  if (irrecv.decode(&results))
     {
-      Serial.println(results.value, DEC); // Print the Serial 'results.value'
+      Serial.println(decode_hex(String(results.value, HEX))); // Print the Serial 'results.value'
       irrecv.resume();   // Receive the next value
     }
-  
-  
 }
