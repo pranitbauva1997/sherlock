@@ -176,22 +176,27 @@ void getmessage(){
   irrecv.resume();
   if(irrecv.decode(&results)){
     received = String(results.value, HEX);
+    Serial.println(received);
     if(decode_hex(received) % 2 == 1){
       irrecv.resume();
       if(irrecv.decode(&results)){
         received = String(results.value, HEX);
+        Serial.println(received);
         current_poi = decode_hex(received);
         irrecv.resume();
         if(irrecv.decode(&results)){
           received = String(results.value, HEX);
+          Serial.println(received);
           dst_poi = decode_hex(received);
           irrecv.resume();
           if(irrecv.decode(&results)){
             received = String(results.value, HEX);
+            Serial.println(received);
             dst_direction = decode_hex(received);
             irrecv.resume();
             if(irrecv.decode(&results)){
               received = String(results.value, HEX);
+              Serial.println(received);
               if(decode_hex(received) != 500){
                 move_(0, 0);
               }
@@ -206,40 +211,49 @@ void getmessage(){
     if(irrecv.decode(&results)){
       received = String(results.value, HEX);
       start_poi = decode_hex(received);
+      Serial.println(received);
       irrecv.resume();
       if(irrecv.decode(&results)){
-       received = String(results.value, HEX);
+        received = String(results.value, HEX);
+        Serial.println(received);
         end_poi = decode_hex(received);
         irrecv.resume();
         if(irrecv.decode(&results)){
           received = String(results.value, HEX);
+          Serial.println(received);
           if(decode_hex(received) != 500){
             move_(0, 0);
           }
           irrecv.resume();
           if(irrecv.decode(&results)){
             received = String(results.value, HEX);
+            Serial.println(received);
             if(decode_hex(received) == 400){
               irrecv.resume();
               if(irrecv.decode(&results)){
                 received = String(results.value, HEX);
+                Serial.println(received);
                 if(decode_hex(received) % 2 == 0){
                   irrecv.resume();
                   if(irrecv.decode(&results)){
                     received = String(results.value, HEX);
+                    Serial.println(received);
                     current_poi = decode_hex(received);
                     irrecv.resume();
                     if(irrecv.decode(&results)){
                       received = String(results.value, HEX);
+                      Serial.println(received);
                       dst_poi = decode_hex(received);
                       irrecv.resume();
                       if(irrecv.decode(&results)){
                         received = String(results.value, HEX);
+                        Serial.println(received);
                         dst_direction = decode_hex(received);
                         irrecv.resume();
                         irrecv.resume();
                         if(irrecv.decode(&results)){
                           received = String(results.value, HEX);
+                          Serial.println(received);
                           if(decode_hex(received) != 500){
                             move_(0, 0);
                           }
@@ -282,6 +296,7 @@ void loop(){
   // Get and decode the signal from IR receiver
   if(irrecv.decode(&results)){
     received = String(results.value, HEX);
+    Serial.println(received);
     if(decode_hex(received) == 400){
       getmessage();
     }
