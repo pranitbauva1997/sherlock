@@ -7,12 +7,12 @@
 #define IRpin 11
 
 // Pins for motor
-#define ENABLE_MOTOR_L 1
-#define ENABLE_MOTOR_R 2
-#define POSITIVE_MOTOR_L 3
-#define NEGATIVE_MOTOR_L 4
-#define POSITIVE_MOTOR_R 5
-#define NEGATIVE_MOTOR_R 6
+#define ENABLE_MOTOR_L 6
+#define ENABLE_MOTOR_R 7
+#define POSITIVE_MOTOR_L 24
+#define NEGATIVE_MOTOR_L 25
+#define POSITIVE_MOTOR_R 28
+#define NEGATIVE_MOTOR_R 29
 
 // Define other "constants"
 #define MAX_SPEED 150
