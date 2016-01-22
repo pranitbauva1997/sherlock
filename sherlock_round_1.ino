@@ -30,12 +30,15 @@ float dst_direction, current_direction;
 int start_poi, end_poi;
 int current_poi, dst_poi;
 String received;
+int message[12];
 
 // Method declarations
 void getPath();
 void move_();
 void getmessage();
 int decode_hex(String received);
+int store_message();
+void print_arr();
 
 void move_(int l, int r){
   if(l > 0 && r > 0){
@@ -172,104 +175,21 @@ void getPath(){
   }
 }
 
-void getmessage(){
-  irrecv.resume();
-  if(irrecv.decode(&results)){
-    received = String(results.value, HEX);
-    Serial.println(received);
-    if(decode_hex(received) % 2 == 1){
-      irrecv.resume();
-      if(irrecv.decode(&results)){
-        received = String(results.value, HEX);
-        Serial.println(received);
-        current_poi = decode_hex(received);
-        irrecv.resume();
-        if(irrecv.decode(&results)){
-          received = String(results.value, HEX);
-          Serial.println(received);
-          dst_poi = decode_hex(received);
-          irrecv.resume();
-          if(irrecv.decode(&results)){
-            received = String(results.value, HEX);
-            Serial.println(received);
-            dst_direction = decode_hex(received);
-            irrecv.resume();
-            if(irrecv.decode(&results)){
-              received = String(results.value, HEX);
-              Serial.println(received);
-              if(decode_hex(received) != 500){
-                move_(0, 0);
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-  else{
+int store_message(){
+  message[0] = 400;
+  int i;
+  for(i = 1; i < 12; i++){
     irrecv.resume();
     if(irrecv.decode(&results)){
-      received = String(results.value, HEX);
-      start_poi = decode_hex(received);
-      Serial.println(received);
-      irrecv.resume();
-      if(irrecv.decode(&results)){
-        received = String(results.value, HEX);
-        Serial.println(received);
-        end_poi = decode_hex(received);
-        irrecv.resume();
-        if(irrecv.decode(&results)){
-          received = String(results.value, HEX);
-          Serial.println(received);
-          if(decode_hex(received) != 500){
-            move_(0, 0);
-          }
-          irrecv.resume();
-          if(irrecv.decode(&results)){
-            received = String(results.value, HEX);
-            Serial.println(received);
-            if(decode_hex(received) == 400){
-              irrecv.resume();
-              if(irrecv.decode(&results)){
-                received = String(results.value, HEX);
-                Serial.println(received);
-                if(decode_hex(received) % 2 == 0){
-                  irrecv.resume();
-                  if(irrecv.decode(&results)){
-                    received = String(results.value, HEX);
-                    Serial.println(received);
-                    current_poi = decode_hex(received);
-                    irrecv.resume();
-                    if(irrecv.decode(&results)){
-                      received = String(results.value, HEX);
-                      Serial.println(received);
-                      dst_poi = decode_hex(received);
-                      irrecv.resume();
-                      if(irrecv.decode(&results)){
-                        received = String(results.value, HEX);
-                        Serial.println(received);
-                        dst_direction = decode_hex(received);
-                        irrecv.resume();
-                        irrecv.resume();
-                        if(irrecv.decode(&results)){
-                          received = String(results.value, HEX);
-                          Serial.println(received);
-                          if(decode_hex(received) != 500){
-                            move_(0, 0);
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
+      message[i] = results.value;
     }
+    else
+      return -1;
+
+    return 0;
   }
 }
+
 void setup(){
   Serial.begin(9600);
 
@@ -297,11 +217,12 @@ void loop(){
   if(irrecv.decode(&results)){
     received = String(results.value, HEX);
     Serial.println(received);
-    if(decode_hex(received) == 400){
-      getmessage();
-    }
+    if(decode_hex(received) == 400)
+      if(store_message() != 0)
+        loop();
   }
 
+  print_arr();
 
   // Get the heading from magnetometer
   mag.getEvent(&event);
@@ -338,3 +259,10 @@ int decode_hex(String input)
     int output = (int) strtol(c, NULL, 16);
     return output;
 }
+
+void print_arr(){
+  int i;
+  for(i = 0; i < 12; i++)
+    Serial.println(decode_hex(String(message[i], HEX)));
+}
+
