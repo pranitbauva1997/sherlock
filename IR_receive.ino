@@ -19,6 +19,18 @@ int IRpin = 11;
 IRrecv irrecv(IRpin);
 decode_results results;
 
+int decode_hex(String input)
+{
+    int zeros = 8-input.length();
+    for(int i=0; i<zeros; i++) {
+        input = "0" + input;
+    }
+    String hex_data = input.substring(0,2) + input.substring(4,6);
+    const char * c = hex_data.c_str();
+    int output = (int) strtol(c, NULL, 16);
+    return output;
+}
+
 void setup()
 {
   Serial.begin(9600);
@@ -33,3 +45,4 @@ void loop()
       irrecv.resume();   // Receive the next value
     }
 }
+
